@@ -16,6 +16,24 @@
     header, section {
       padding: 4rem 2rem;
       text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease forwards;
+    }
+    header {
+      animation-delay: 0.3s;
+    }
+    section:nth-of-type(1) {
+      animation-delay: 1s;
+    }
+    section:nth-of-type(2) {
+      animation-delay: 1.7s;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: none;
+      }
     }
     h1, h2 {
       font-family: 'Great Vibes', cursive;
