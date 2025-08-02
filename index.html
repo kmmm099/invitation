@@ -1,93 +1,243 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>結婚式のお誘い</title>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Noto Serif JP', serif;
-      background: #fffaf5;
-      color: #333;
-      line-height: 1.8;
-    }
-    header, section {
-      padding: 4rem 2rem;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1s ease forwards;
-    }
-    header {
-      animation-delay: 0.3s;
-    }
-    section:nth-of-type(1) {
-      animation-delay: 1s;
-    }
-    section:nth-of-type(2) {
-      animation-delay: 1.7s;
-    }
-    @keyframes fadeInUp {
-      to {
+  <head>
+    <link rel="icon" href="favicon.jpg" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>離婚式へようこそ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Marcellus&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Marcellus', 'Noto Serif JP', serif;
+        background: url('background.png') no-repeat center center fixed;
+        background-size: cover;
+        color: #4a3b2c;
+        line-height: 1.8;
+      }
+      header, section {
+        padding: 4rem 2rem;
+        text-align: center;
+      }
+      h1, h2 {
+        font-family: 'Great Vibes', cursive;
+        color: #a67c52;
+        font-size: 2.5rem;
+        line-height: 1.4;
+        letter-spacing: 0.05em;
+      }
+      .section-title {
+        font-size: 2.2rem;
+        font-weight: normal;
+        margin-bottom: 1.5rem;
+        font-family: 'Marcellus', 'Noto Serif JP', serif;
+      }
+      .image {
+        max-width: 100%;
+        height: auto;
+        margin: 2rem 0;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .item {
+        margin-bottom: 3rem;
+      }
+      .board {
+        margin: 2rem auto;
+        max-width: 600px;
+        text-align: left;
+      }
+      .board input[type="text"],
+      .board textarea {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #d4cfc9;
+        margin-bottom: 0.5rem;
+      }
+      .board textarea {
+        height: 100px;
+        resize: vertical;
+      }
+      .board button {
+        margin-top: 0.5rem;
+        padding: 0.5rem 1.5rem;
+        background-color: #a67c52;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .messages {
+        margin-top: 2rem;
+        background-color: #fdfaf7;
+        border: 1px solid #e5ded7;
+        padding: 1rem;
+        border-radius: 10px;
+      }
+      .message {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e5ded7;
+      }
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 1s ease, transform 1s ease;
+      }
+      .animate-on-scroll.visible {
         opacity: 1;
         transform: none;
       }
-    }
-    h1, h2 {
-      font-family: 'Great Vibes', cursive;
-      color: #b38b6d;
-    }
-    .section-title {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .image {
-      max-width: 100%;
-      height: auto;
-      margin: 2rem 0;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .item {
-      margin-bottom: 3rem;
-    }
-  </style>
-</head>
-<body>
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyAavEeeyF0nO6LAvom8Msjy_Oqm3Uo6HrY",
+        authDomain: "invitation-581b5.firebaseapp.com",
+        databaseURL: "https://invitation-581b5-default-rtdb.firebaseio.com",
+        projectId: "invitation-581b5",
+        storageBucket: "invitation-581b5.firebasestorage.app",
+        messagingSenderId: "718282571964",
+        appId: "1:718282571964:web:339ff6fc9d27002852d0b9",
+        measurementId: "G-DCBMW5ECX3"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
 
-  <header>
-    <h1 class="section-title">結婚式のお誘い</h1>
-    <p>日付：8/11 - 8/20<br>
-    場所：山</p>
-    <img class="image" src="your_photo1.jpg" alt="結婚式の写真">
-  </header>
+      document.addEventListener("DOMContentLoaded", function () {
+        db.ref("messages").orderByChild("timestamp").on("child_added", snapshot => {
+          const data = snapshot.val();
+          document.querySelectorAll(".messages").forEach(messagesDiv => {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+            messageElement.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
+            messagesDiv.appendChild(messageElement);
+          });
+        });
+      });
 
-  <section>
-    <h2 class="section-title">当日の予定</h2>
-    <p>たのしいコンテンツをご用意！！</p>
-    <img class="image" src="your_photo2.jpg" alt="当日の予定の写真">
-  </section>
+      function postMessage(button) {
+        const section = button.closest('.board');
+        const nameInput = section.querySelector('input[type="text"]');
+        const textArea = section.querySelector('textarea');
+        const name = nameInput.value.trim() || "匿名";
+        const message = textArea.value.trim();
+        if (message === "") return;
+        const newMsgRef = db.ref("messages").push();
+        newMsgRef.set({ name: name, message: message, timestamp: Date.now() });
+        nameInput.value = "";
+        textArea.value = "";
+      }
+    </script>
+  </head>
+  <body>
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.6); z-index: -1;"></div>
+    <header class="animate-on-scroll">
+      <h1 class="section-title">離婚式</h1>
+      <p>謹啓 皆様におかれましては</p>
+      <p>益々ご清祥のこととお慶び申し上げます</p>
+      <p>かつて婚約していた元新郎  石橋侑汰は このたび離婚式を挙げ</p>
+      <p>新しい第一歩を踏み出すことになりました</p>
+      <p>つきましては 皆様により一層のご指導を賜りたく</p>
+      <p>ささやかではございますが 離婚披露宴を催したく存じます</p>
+      <p>ご多用中 誠に恐縮ではございますが</p>
+      <p>ぜひご出席をお願いいたしたく ご案内申し上げます</p>
+      <p>敬白</p>
+      <br>
+      <p>2025年8月</p>
+      <p>石橋侑汰</p>
 
-  <section>
-    <h2 class="section-title">コンテンツ紹介</h2>
-    <div class="item">
-      <h3>① 栃木ツアー</h3>
-      <p>日本一の縁切りスポットにご案内</p>
-      <img class="image" src="your_photo3.jpg" alt="栃木ツアーの写真">
-    </div>
-    <div class="item">
-      <h3>② BBQ</h3>
-      <p>楽しくBBQ</p>
-      <img class="image" src="your_photo4.jpg" alt="BBQの写真">
-    </div>
-    <div class="item">
-      <h3>③ 宿泊</h3>
-      <p>宿泊</p>
-      <img class="image" src="your_photo5.jpg" alt="宿泊の写真">
-    </div>
-  </section>
+      <div style="position: relative; display: inline-block;">
+        <img class="image" src="photo1.JPG" alt="結婚式の写真">
+        <style>
+@media (max-width: 768px) {
+  .section1-text {
+    top: 12%;
+    right: 5%;
+    font-size: 1rem;
+  }
+}
+@media (min-width: 769px) {
+  .section1-text {
+    top: 6%;
+    right: 5%;
+    font-size: 1.5rem;
+  }
+}
+</style>
+<div style="position: absolute; text-align: right; z-index: 10; display: flex; flex-direction: column; align-items: flex-end;" class="section1-text">
+  <div style="opacity: 1; margin-bottom: 0.5rem; font-weight: bold;">26年も生きてたら、ハプニングなんて朝飯前さ</div>
+  <div style="opacity: 1;">人生の再出発に、乾杯。</div>
+</div>
+      </div>
+      <p><strong>誰もが予想しなかったまさかの結末。</strong></p>
+      <p><strong>こんなの二度とない、折角なので全力で楽しみましょう！</strong></p>
+    </header>
 
-</body>
+    <section class="animate-on-scroll">
+        
+      <h2 class="section-title">詳細</h2>
+      <img class="image" src="photo2.jpg" alt="当日の予定の写真">
+      <p><strong>日時</strong></p>
+      <p>8/10-8/11</p>
+      <p>※2部構成になっておりますので、<br>ご都合に応じて調整ください。</p>
+      <p><strong>場所</strong></p>
+      <p>栃木県日光市</p>     
+
+    </section>
+
+    <section class="animate-on-scroll">
+      <h2 class="section-title">人生リセットツアー</h2>
+      <div style="margin: 2rem auto; max-width: 500px;" class="item">
+        <h3>① 離婚披露宴</h3>
+        
+        <img class="image" src="photo3.jpeg" alt="栃木ツアーの写真">
+        <p>日本一の縁切り神社で旧き縁をバッサリ断ち切る。</p>
+      </div>
+      <div style="margin: 2rem auto; max-width: 500px;" class="item">
+        <h3>② 解放BBQ</h3>
+        <img class="image" src="photo4.jpg" alt="BBQの写真">
+        <p>炭火で焼くのは肉だけじゃない、未練も一緒に焼き払え！</p>
+      </div>
+      <div style="margin: 2rem auto; max-width: 500px;" class="item">
+        <h3>③ 2次会</h3>
+        <p>お風呂とお酒で魂を浄化。朝にはすっきり新しい自分。</p>
+        <img class="image" src="photo5.jpg" alt="宿泊の写真">
+      </div>
+    </section>
+
+    <section class="animate-on-scroll">
+      <h2 class="section-title">集合場所のご案内</h2>
+      <p>集合場所は <strong>どこか</strong> です。<br>お時間に余裕をもってお越しください。</p>
+      <div style="margin: 2rem auto; max-width: 800px;">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18..." width="100%" height="450" style="border:0; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <section class="animate-on-scroll">
+      <h2 class="section-title">元新郎へひとこと</h2>
+      <p>とりあえず何でもいいんで、一言お願いします。</p>
+      <img style="margin: 2rem auto; max-width: 500px;" class="image" src="photo6.jpg" alt="掲示板の雰囲気写真">
+      <div class="board">
+        <input type="text" placeholder="名前（匿名可）">
+        <textarea placeholder="コメントを入力してください"></textarea>
+        <button onclick="postMessage(this)">投稿</button>
+        <p style="text-align: center; font-weight: bold; margin-top: 2rem;">皆さんからのコメント</p>
+        <div class="messages"></div>
+      </div>
+    </section>
+
+    <script>
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      });
+      document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    </script>
+  </body>
 </html>
