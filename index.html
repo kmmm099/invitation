@@ -2,32 +2,74 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Erigor Cafe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>結婚式のお誘い</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Helvetica Neue', sans-serif;
-      background: linear-gradient(to bottom right, #f9f9f9, #ddd);
+      font-family: 'Noto Serif JP', serif;
+      background: #fffaf5;
       color: #333;
+      line-height: 1.8;
     }
-
-    header {
-      background-color: #333;
-      color: white;
-      padding: 2rem;
+    header, section {
+      padding: 4rem 2rem;
       text-align: center;
     }
-
-    main {
-      padding: 3rem 2rem;
-      text-align: center;
+    h1, h2 {
+      font-family: 'Great Vibes', cursive;
+      color: #b38b6d;
     }
-
-    h1 {
-      font-size: 2.5rem;
+    .section-title {
+      font-size: 2rem;
       margin-bottom: 1rem;
     }
+    .image {
+      max-width: 100%;
+      height: auto;
+      margin: 2rem 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .item {
+      margin-bottom: 3rem;
+    }
+  </style>
+</head>
+<body>
 
-    p {
-      font-size: 1.2r
+  <header>
+    <h1 class="section-title">結婚式のお誘い</h1>
+    <p>日付：8/11 - 8/20<br>
+    場所：山</p>
+    <img class="image" src="your_photo1.jpg" alt="結婚式の写真">
+  </header>
+
+  <section>
+    <h2 class="section-title">当日の予定</h2>
+    <p>たのしいコンテンツをご用意！！</p>
+    <img class="image" src="your_photo2.jpg" alt="当日の予定の写真">
+  </section>
+
+  <section>
+    <h2 class="section-title">コンテンツ紹介</h2>
+    <div class="item">
+      <h3>① 栃木ツアー</h3>
+      <p>日本一の縁切りスポットにご案内</p>
+      <img class="image" src="your_photo3.jpg" alt="栃木ツアーの写真">
+    </div>
+    <div class="item">
+      <h3>② BBQ</h3>
+      <p>楽しくBBQ</p>
+      <img class="image" src="your_photo4.jpg" alt="BBQの写真">
+    </div>
+    <div class="item">
+      <h3>③ 宿泊</h3>
+      <p>宿泊</p>
+      <img class="image" src="your_photo5.jpg" alt="宿泊の写真">
+    </div>
+  </section>
+
+</body>
+</html>
