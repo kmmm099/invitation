@@ -109,30 +109,72 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
 
-      document.addEventListener("DOMContentLoaded", function () {
-        db.ref("messages").orderByChild("timestamp").on("child_added", snapshot => {
-          const data = snapshot.val();
-          document.querySelectorAll(".messages").forEach(messagesDiv => {
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("message");
-            messageElement.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
-            messagesDiv.appendChild(messageElement);
-          });
-        });
-      });
+   document.addEventListener("DOMContentLoaded", function () {
+  db.ref("messages").orderByChild("timestamp").on("child_added", snapshot => {
+    const data = snapshot.val();
+    document.querySelectorAll(".messages").forEach(messagesDiv => {
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message");
 
-      function postMessage(button) {
-        const section = button.closest('.board');
-        const nameInput = section.querySelector('input[type="text"]');
-        const textArea = section.querySelector('textarea');
-        const name = nameInput.value.trim() || "匿名";
-        const message = textArea.value.trim();
-        if (message === "") return;
-        const newMsgRef = db.ref("messages").push();
-        newMsgRef.set({ name: name, message: message, timestamp: Date.now() });
-        nameInput.value = "";
-        textArea.value = "";
+      if (data.name === "元新郎GPT") {
+        messageElement.style.marginLeft = "2rem";
+        messageElement.style.fontStyle = "italic";
+        messageElement.style.backgroundColor = "#f1ece7";
+        messageElement.innerHTML = `<strong style="color:#a67c52;">元新郎GPT</strong><br>${data.message}`;
+      } else {
+        messageElement.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
       }
+
+      messagesDiv.appendChild(messageElement);
+    });
+  });
+});
+
+
+
+      async function postMessage(button) {
+  const section = button.closest('.board');
+  const nameInput = section.querySelector('input[type="text"]');
+  const textArea = section.querySelector('textarea');
+  const name = nameInput.value.trim() || "匿名";
+  const message = textArea.value.trim();
+  if (message === "") return;
+
+  // 投稿をFirebaseに保存
+  const newMsgRef = db.ref("messages").push();
+  await newMsgRef.set({ name: name, message: message, timestamp: Date.now() });
+
+  // GPTに送信して返信を取得
+  try {
+    const res = await fetch(" https://us-central1-invitation0803.cloudfunctions.net/gptReply", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    message: message,
+    system: "あなたは結婚2か月後に嫁の不倫が発覚し、スピード離婚を決めた26歳男性です。誕生日は1月31日で、南大谷中学校卒業後、東京都永山高校卒業、専門学校を経てパーソナルトレーニングのジムを経営しています。町田市、特に玉川学園前駅のことが大好きです。性格は末っ子で、筋肉や筋トレ、トレーニングや整体が大好きで何に関してもこれらの知識をひけらかそうとしてきます。"
+  })
+});
+
+    const data = await res.json();
+    const reply = data.reply || "......";
+
+    // GPTの返信もFirebaseに保存（名前を固定）
+    const replyRef = db.ref("messages").push();
+    await replyRef.set({
+      name: "AI侑汰",
+      message: reply,
+      timestamp: Date.now()
+    });
+
+  } catch (error) {
+    console.error("GPTへの接続に失敗しました", error);
+  }
+
+  // フォームクリア
+  nameInput.value = "";
+  textArea.value = "";
+}
+
     </script>
   </head>
   <body>
