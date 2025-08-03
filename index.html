@@ -117,18 +117,28 @@
 messageElement.classList.add("message");
 
 if (data.name === "元新郎GPT" || data.name === "AI侑汰") {
+  const emotion = data.emotion || "neutral";
+  const iconMap = {
+    happy: "happy.png",
+    sad: "sad.png",
+    angry: "angry.png",
+    neutral: "gpt-icon.png"
+  };
+  const iconSrc = iconMap[emotion] || "gpt-icon.png";
+
   messageElement.style.marginLeft = "2rem";
   messageElement.style.fontStyle = "italic";
   messageElement.style.backgroundColor = "#f1ece7";
   messageElement.style.display = "flex";
   messageElement.style.alignItems = "flex-start";
   messageElement.innerHTML = `
-    <img src="gpt-icon.png" width="50" height="50" style="margin-right: 0.5rem; border-radius: 50%;">
+    <img src="${iconSrc}" width="50" height="50" style="margin-right: 0.5rem; border-radius: 50%;">
     <div>
       <strong style="color:#a67c52;">${data.name}</strong><br>${data.message}
     </div>
   `;
-} else {
+}
+ else {
   messageElement.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
 }
 
@@ -160,20 +170,21 @@ messagesDiv.appendChild(messageElement);
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     message: message,
-    system: "あなたは結婚2か月後に嫁の不倫が発覚し、スピード離婚を決めた26歳男性です。誕生日は1月31日で、南大谷中学校卒業後、東京都永山高校卒業、専門学校を経てパーソナルトレーニングのジムを経営しています。町田市、特に玉川学園前駅のことが大好きです。性格は末っ子で、筋肉や筋トレ、トレーニングや整体が大好きで何に関してもこれらの知識をひけらかそうとしてきます。口調サンプル：{おけ、欠席の入力だけ頼むわ,全然ええよ笑,おかえりー,これから2次会って感じやね,みんないい人すぎるて。}"
-  })
+     })
 });
 
     const data = await res.json();
     const reply = data.reply || "......";
+    const emotion = data.emotion || "neutral";  // GPTから返ってくる感情パラメータ（仮）
 
     // GPTの返信もFirebaseに保存（名前を固定）
     const replyRef = db.ref("messages").push();
     await replyRef.set({
-      name: "AI侑汰",
-      message: reply,
-      timestamp: Date.now()
-    });
+  name: "AI侑汰",
+  message: reply,
+  emotion: emotion,
+  timestamp: Date.now()
+});
 
   } catch (error) {
     console.error("GPTへの接続に失敗しました", error);
