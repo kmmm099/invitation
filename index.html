@@ -381,24 +381,25 @@ messagesDiv.appendChild(messageElement);
   document.getElementById("chatAnchor").addEventListener("click", async function (e) {
 
     const bubble = this.previousElementSibling;
-    bubble.textContent = "...";
+    bubble.textContent = "ありがとう！"
+    // bubble.textContent = "..."; トークン節約のためコメントアウト
 
-    try {
-      const res = await fetch("https://us-central1-invitation0803.cloudfunctions.net/gptReply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: "何か喋ってよ。12文字以内で。",
-          system: "あなたは離婚式に参加する元新郎として、今の気持ちを一言で表してください。"
-        })
-      });
+    // try {
+    //   const res = await fetch("https://us-central1-invitation0803.cloudfunctions.net/gptReply", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       message: "何か喋ってよ。12文字以内で。",
+    //       system: "あなたは離婚式に参加する元新郎として、今の気持ちを一言で表してください。"
+    //     })
+    //   });
 
-      const data = await res.json();
-      bubble.textContent = data.reply || "......";
-    } catch (err) {
-      bubble.textContent = "通信エラー";
-      console.error(err);
-    }
+    //   const data = await res.json();
+    //   bubble.textContent = data.reply || "......";
+    // } catch (err) {
+    //   bubble.textContent = "通信エラー";
+    //   console.error(err);
+    // }
 
     // スクロール移動
     const section = document.getElementById("messageSection");
