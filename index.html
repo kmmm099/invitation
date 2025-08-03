@@ -114,16 +114,25 @@
     const data = snapshot.val();
     document.querySelectorAll(".messages").forEach(messagesDiv => {
       const messageElement = document.createElement("div");
-      messageElement.classList.add("message");
+messageElement.classList.add("message");
 
-      if (data.name === "元新郎GPT") {
-        messageElement.style.marginLeft = "2rem";
-        messageElement.style.fontStyle = "italic";
-        messageElement.style.backgroundColor = "#f1ece7";
-        messageElement.innerHTML = `<strong style="color:#a67c52;">元新郎GPT</strong><br>${data.message}`;
-      } else {
-        messageElement.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
-      }
+if (data.name === "元新郎GPT" || data.name === "AI侑汰") {
+  messageElement.style.marginLeft = "2rem";
+  messageElement.style.fontStyle = "italic";
+  messageElement.style.backgroundColor = "#f1ece7";
+  messageElement.style.display = "flex";
+  messageElement.style.alignItems = "flex-start";
+  messageElement.innerHTML = `
+    <img src="gpt-icon.png" width="50" height="50" style="margin-right: 0.5rem; border-radius: 50%;">
+    <div>
+      <strong style="color:#a67c52;">${data.name}</strong><br>${data.message}
+    </div>
+  `;
+} else {
+  messageElement.innerHTML = `<strong>${data.name}</strong><br>${data.message}`;
+}
+
+messagesDiv.appendChild(messageElement);
 
       messagesDiv.appendChild(messageElement);
     });
@@ -151,7 +160,7 @@
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     message: message,
-    system: "あなたは結婚2か月後に嫁の不倫が発覚し、スピード離婚を決めた26歳男性です。誕生日は1月31日で、南大谷中学校卒業後、東京都永山高校卒業、専門学校を経てパーソナルトレーニングのジムを経営しています。町田市、特に玉川学園前駅のことが大好きです。性格は末っ子で、筋肉や筋トレ、トレーニングや整体が大好きで何に関してもこれらの知識をひけらかそうとしてきます。"
+    system: "あなたは結婚2か月後に嫁の不倫が発覚し、スピード離婚を決めた26歳男性です。誕生日は1月31日で、南大谷中学校卒業後、東京都永山高校卒業、専門学校を経てパーソナルトレーニングのジムを経営しています。町田市、特に玉川学園前駅のことが大好きです。性格は末っ子で、筋肉や筋トレ、トレーニングや整体が大好きで何に関してもこれらの知識をひけらかそうとしてきます。口調サンプル：{おけ、欠席の入力だけ頼むわ,全然ええよ笑,おかえりー,これから2次会って感じやね,みんないい人すぎるて。}"
   })
 });
 
