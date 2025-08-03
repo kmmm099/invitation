@@ -14,7 +14,18 @@
         background-size: cover;
         color: #4a3b2c;
         line-height: 1.8;
+        position: relative;
       }
+      @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
       header, section {
         padding: 4rem 2rem;
         text-align: center;
@@ -92,6 +103,16 @@
         opacity: 1;
         transform: none;
       }
+      @keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+.floaty {
+  animation: float 2s ease-in-out infinite;
+}
+
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -287,7 +308,7 @@ messagesDiv.appendChild(messageElement);
       </div>
     </section>
 
-    <section class="animate-on-scroll">
+    <section id="messageSection" class="animate-on-scroll">
       <h2 class="section-title">元新郎へひとこと</h2>
       <p>とりあえず何でもいいんで、一言お願いします。</p>
       <img class="image" src="photo6.jpg" alt="掲示板の雰囲気写真" style="max-width: 80vw; height: auto; margin: 2rem auto; display: block; box-sizing: border-box;">
@@ -310,5 +331,80 @@ messagesDiv.appendChild(messageElement);
       });
       document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
     </script>
+
+    <div id="chat-float" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+">
+  <!-- 吹き出し -->
+  <div class="floaty" style="
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    white-space: nowrap;
+    position: relative;
+  ">
+    侑汰にひとことお願いします！
+    <span style="
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 8px solid #fff;
+    "></span>
+  </div>
+
+  <!-- アイコン画像 -->
+  <a href="#messageSection" id="chatAnchor">
+    <img src="gpt-icon.png" alt="AIアイコン" class="floaty" style="
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+    ">
+  </a>
+</div>
+<script>
+  document.getElementById("chatAnchor").addEventListener("click", async function (e) {
+
+    const bubble = this.previousElementSibling;
+    bubble.textContent = "...";
+
+    try {
+      const res = await fetch("https://us-central1-invitation0803.cloudfunctions.net/gptReply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: "何か喋ってよ。12文字以内で。",
+          system: "あなたは離婚式に参加する元新郎として、今の気持ちを一言で表してください。"
+        })
+      });
+
+      const data = await res.json();
+      bubble.textContent = data.reply || "......";
+    } catch (err) {
+      bubble.textContent = "通信エラー";
+      console.error(err);
+    }
+
+    // スクロール移動
+    const section = document.getElementById("messageSection");
+    section.scrollIntoView({ behavior: "smooth" });
+  });
+</script>
+
   </body>
 </html>
